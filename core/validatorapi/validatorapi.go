@@ -390,6 +390,11 @@ func (c Component) Proposal(ctx context.Context, opts *eth2api.ProposalOpts) (*e
 	proposal.ConsensusValue = big.NewInt(1)
 	proposal.ExecutionValue = big.NewInt(1)
 
+	log.Debug(ctx, "[chiado] processed proposal",
+		z.Str("pubkey", pubkey.String()),
+		z.Str("parsig", parSig.Signature().ToETH2().String()),
+		z.Any("proposal", proposal))
+
 	return wrapResponse(proposal), nil
 }
 
@@ -412,6 +417,10 @@ func (c Component) SubmitProposal(ctx context.Context, opts *eth2api.SubmitPropo
 	if err != nil {
 		return err
 	}
+
+	log.Debug(ctx, "[chiado] processing submit_proposal",
+		z.Str("pubkey", pubkey.String()),
+		z.Any("signedData", signedData))
 
 	// Verify proposal signature
 	err = c.verifyPartialSig(ctx, signedData, pubkey)
@@ -452,6 +461,10 @@ func (c Component) SubmitBlindedProposal(ctx context.Context, opts *eth2api.Subm
 	if err != nil {
 		return err
 	}
+
+	log.Debug(ctx, "[chiado] processing submit_blinded_proposal",
+		z.Str("pubkey", pubkey.String()),
+		z.Any("signedData", signedData))
 
 	// Verify Blinded block signature
 	err = c.verifyPartialSig(ctx, signedData, pubkey)
