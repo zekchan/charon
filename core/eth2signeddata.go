@@ -5,6 +5,7 @@ package core
 import (
 	"context"
 	"encoding/hex"
+	"time"
 
 	eth2p0 "github.com/attestantio/go-eth2-client/spec/phase0"
 
@@ -41,8 +42,12 @@ func VerifyEth2SignedData(ctx context.Context, eth2Cl eth2wrap.Client, data Eth2
 		return err
 	}
 
+	jsdata, _ := data.MarshalJSON()
+
 	domainName := data.DomainName()
 	sig := data.Signature().ToETH2()
+
+	time.Sleep(100 * time.Millisecond)
 
 	log.Debug(ctx, "[chiado] VerifyEth2SignedData",
 		z.Str("pubkey", hex.EncodeToString(pubkey[:])),
@@ -50,7 +55,9 @@ func VerifyEth2SignedData(ctx context.Context, eth2Cl eth2wrap.Client, data Eth2
 		z.Str("domainName", string(domainName)),
 		z.Str("sig", sig.String()),
 		z.Any("epoch", epoch),
-		z.Any("data", data))
+		z.Any("jsdata", jsdata))
+
+	time.Sleep(100 * time.Millisecond)
 
 	return signing.Verify(ctx, eth2Cl, domainName, epoch, sigRoot, sig, pubkey)
 }
