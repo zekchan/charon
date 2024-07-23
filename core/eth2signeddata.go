@@ -49,7 +49,8 @@ func VerifyEth2SignedData(ctx context.Context, eth2Cl eth2wrap.Client, data Eth2
 		z.Str("sigRoot", hex.EncodeToString(sigRoot[:])),
 		z.Str("domainName", string(domainName)),
 		z.Str("sig", sig.String()),
-		z.Any("epoch", epoch))
+		z.Any("epoch", epoch),
+		z.Any("data", data))
 
 	return signing.Verify(ctx, eth2Cl, domainName, epoch, sigRoot, sig, pubkey)
 }
