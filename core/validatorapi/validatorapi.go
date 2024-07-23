@@ -13,6 +13,7 @@ import (
 
 	eth2api "github.com/attestantio/go-eth2-client/api"
 	eth2v1 "github.com/attestantio/go-eth2-client/api/v1"
+	eth2spec "github.com/attestantio/go-eth2-client/spec"
 	"github.com/attestantio/go-eth2-client/spec/altair"
 	eth2p0 "github.com/attestantio/go-eth2-client/spec/phase0"
 	"go.opentelemetry.io/otel/trace"
@@ -396,12 +397,60 @@ func (c Component) Proposal(ctx context.Context, opts *eth2api.ProposalOpts) (*e
 		return nil, errors.Wrap(err, "json marshal for proposal")
 	}
 
+	broot, err := proposal.BodyRoot()
+	if err != nil {
+		return nil, errors.Wrap(err, "proposal body root")
+	}
+
 	log.Debug(context.Background(), "[chiado] processed proposal",
 		z.Str("pubkey", pubkey.String()),
 		z.Str("parsig", parSig.Signature().ToETH2().String()),
+		z.Str("bodyRoot", broot.String()),
 		z.Str("proposal", string(jsproposal)))
 
 	return wrapResponse(proposal), nil
+}
+
+func versionedSignedProposalMessageRoot(v *eth2api.VersionedSignedProposal) (eth2p0.Root, error) {
+	switch v.Version {
+	case eth2spec.DataVersionPhase0:
+		return v.Phase0.Message.HashTreeRoot()
+	case eth2spec.DataVersionAltair:
+		return v.Altair.Message.HashTreeRoot()
+	case eth2spec.DataVersionBellatrix:
+		if v.Blinded {
+			return v.BellatrixBlinded.Message.HashTreeRoot()
+		}
+
+		return v.Bellatrix.Message.HashTreeRoot()
+	case eth2spec.DataVersionCapella:
+		if v.Blinded {
+			return v.CapellaBlinded.Message.HashTreeRoot()
+		}
+
+		return v.Capella.Message.HashTreeRoot()
+	case eth2spec.DataVersionDeneb:
+		if v.Blinded {
+			return v.DenebBlinded.Message.HashTreeRoot()
+		}
+
+		return v.Deneb.HashTreeRoot()
+	default:
+		return eth2p0.Root{}, errors.New("unknown version")
+	}
+}
+
+func versionedSignedBlindedProposalMessageRoot(v *eth2api.VersionedSignedBlindedProposal) (eth2p0.Root, error) {
+	switch v.Version {
+	case eth2spec.DataVersionBellatrix:
+		return v.Bellatrix.Message.HashTreeRoot()
+	case eth2spec.DataVersionCapella:
+		return v.Capella.Message.HashTreeRoot()
+	case eth2spec.DataVersionDeneb:
+		return v.Deneb.HashTreeRoot()
+	default:
+		return eth2p0.Root{}, errors.New("unknown version")
+	}
 }
 
 func (c Component) SubmitProposal(ctx context.Context, opts *eth2api.SubmitProposalOpts) error {
@@ -429,8 +478,14 @@ func (c Component) SubmitProposal(ctx context.Context, opts *eth2api.SubmitPropo
 		return errors.Wrap(err, "json marshal for proposal")
 	}
 
+	mroot, err := versionedSignedProposalMessageRoot(opts.Proposal)
+	if err != nil {
+		return errors.Wrap(err, "proposal message root")
+	}
+
 	log.Debug(context.Background(), "[chiado] processing submit_proposal",
 		z.Str("pubkey", pubkey.String()),
+		z.Str("messageRoot", mroot.String()),
 		z.Str("proposal", string(jsproposal)))
 
 	// Verify proposal signature
@@ -478,8 +533,14 @@ func (c Component) SubmitBlindedProposal(ctx context.Context, opts *eth2api.Subm
 		return errors.Wrap(err, "json marshal for blinded proposal")
 	}
 
+	mroot, err := versionedSignedBlindedProposalMessageRoot(opts.Proposal)
+	if err != nil {
+		return errors.Wrap(err, "proposal message root")
+	}
+
 	log.Debug(context.Background(), "[chiado] processing submit_blinded_proposal",
 		z.Str("pubkey", pubkey.String()),
+		z.Str("messageRoot", mroot.String()),
 		z.Str("proposal", string(jsproposal)))
 
 	// Verify Blinded block signature
