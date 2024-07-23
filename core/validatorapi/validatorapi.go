@@ -4,6 +4,7 @@ package validatorapi
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"math/big"
 	"runtime"
@@ -390,10 +391,15 @@ func (c Component) Proposal(ctx context.Context, opts *eth2api.ProposalOpts) (*e
 	proposal.ConsensusValue = big.NewInt(1)
 	proposal.ExecutionValue = big.NewInt(1)
 
-	log.Debug(ctx, "[chiado] processed proposal",
+	jsproposal, err := json.Marshal(proposal)
+	if err != nil {
+		return nil, errors.Wrap(err, "json marshal for proposal")
+	}
+
+	log.Debug(context.Background(), "[chiado] processed proposal",
 		z.Str("pubkey", pubkey.String()),
 		z.Str("parsig", parSig.Signature().ToETH2().String()),
-		z.Any("proposal", proposal))
+		z.Str("proposal", string(jsproposal)))
 
 	return wrapResponse(proposal), nil
 }
@@ -418,9 +424,14 @@ func (c Component) SubmitProposal(ctx context.Context, opts *eth2api.SubmitPropo
 		return err
 	}
 
-	log.Debug(ctx, "[chiado] processing submit_proposal",
+	jsproposal, err := json.Marshal(opts.Proposal)
+	if err != nil {
+		return errors.Wrap(err, "json marshal for proposal")
+	}
+
+	log.Debug(context.Background(), "[chiado] processing submit_proposal",
 		z.Str("pubkey", pubkey.String()),
-		z.Any("signedData", signedData))
+		z.Str("proposal", string(jsproposal)))
 
 	// Verify proposal signature
 	err = c.verifyPartialSig(ctx, signedData, pubkey)
@@ -462,9 +473,14 @@ func (c Component) SubmitBlindedProposal(ctx context.Context, opts *eth2api.Subm
 		return err
 	}
 
-	log.Debug(ctx, "[chiado] processing submit_blinded_proposal",
+	jsproposal, err := json.Marshal(opts.Proposal)
+	if err != nil {
+		return errors.Wrap(err, "json marshal for blinded proposal")
+	}
+
+	log.Debug(context.Background(), "[chiado] processing submit_blinded_proposal",
 		z.Str("pubkey", pubkey.String()),
-		z.Any("signedData", signedData))
+		z.Str("proposal", string(jsproposal)))
 
 	// Verify Blinded block signature
 	err = c.verifyPartialSig(ctx, signedData, pubkey)
