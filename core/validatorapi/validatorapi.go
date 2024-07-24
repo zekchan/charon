@@ -402,7 +402,7 @@ func (c Component) Proposal(ctx context.Context, opts *eth2api.ProposalOpts) (*e
 		return nil, errors.Wrap(err, "proposal body root")
 	}
 
-	log.Debug(context.Background(), "[chiado] processed proposal",
+	log.Info(ctx, "VAPI Proposal response",
 		z.Str("pubkey", pubkey.String()),
 		z.Str("parsig", parSig.Signature().ToETH2().String()),
 		z.Str("bodyRoot", broot.String()),
@@ -483,7 +483,7 @@ func (c Component) SubmitProposal(ctx context.Context, opts *eth2api.SubmitPropo
 		return errors.Wrap(err, "proposal message root")
 	}
 
-	log.Debug(context.Background(), "[chiado] processing submit_proposal",
+	log.Info(ctx, "VAPI SubmitProposal input",
 		z.Str("pubkey", pubkey.String()),
 		z.Str("messageRoot", mroot.String()),
 		z.Str("proposal", string(jsproposal)))
@@ -538,7 +538,7 @@ func (c Component) SubmitBlindedProposal(ctx context.Context, opts *eth2api.Subm
 		return errors.Wrap(err, "proposal message root")
 	}
 
-	log.Debug(context.Background(), "[chiado] processing submit_blinded_proposal",
+	log.Info(ctx, "VAPI SubmitBlindedProposal input",
 		z.Str("pubkey", pubkey.String()),
 		z.Str("messageRoot", mroot.String()),
 		z.Str("proposal", string(jsproposal)))

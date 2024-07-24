@@ -328,6 +328,8 @@ func wrap(endpoint string, handler handlerFunc) http.Handler {
 			return
 		}
 
+		log.Debug(ctx, "Raw http request body", z.Str("body", string(body)))
+
 		res, headers, err := handler(ctx, mux.Vars(r), r.URL.Query(), typ, body)
 		if err != nil {
 			writeError(ctx, w, endpoint, err)
@@ -359,6 +361,8 @@ func writeResponse(ctx context.Context, w http.ResponseWriter, endpoint string, 
 			w.Header().Add(name, val)
 		}
 	}
+
+	log.Debug(ctx, "Raw http response body", z.Str("body", string(b)))
 
 	if _, err = w.Write(b); err != nil {
 		// Too late to also try to writeError at this point, so just log.
