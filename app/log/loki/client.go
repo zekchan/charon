@@ -26,11 +26,11 @@ import (
 
 const (
 	contentType   = "application/x-protobuf"
-	maxErrMsgLen  = 1024
-	httpTimeout   = 10 * time.Second
-	batchWait     = 1 * time.Second
-	batchMax      = 5 * 1 << 20 // 5MB
-	maxLogLineLen = 4 << 10     // 4096B
+	maxErrMsgLen  = 8192
+	httpTimeout   = 20 * time.Second
+	batchWait     = 3 * time.Second
+	batchMax      = 10 * 1 << 20 // 10MB
+	maxLogLineLen = 64 << 10     // 64K
 )
 
 // lazyLabelsFunc abstracts lazy loading of labels, logs will only be sent when it returns true.
