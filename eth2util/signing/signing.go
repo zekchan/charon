@@ -4,13 +4,16 @@ package signing
 
 import (
 	"context"
+	"encoding/hex"
 
 	eth2api "github.com/attestantio/go-eth2-client/api"
 	eth2p0 "github.com/attestantio/go-eth2-client/spec/phase0"
 
 	"github.com/obolnetwork/charon/app/errors"
 	"github.com/obolnetwork/charon/app/eth2wrap"
+	"github.com/obolnetwork/charon/app/log"
 	"github.com/obolnetwork/charon/app/tracer"
+	"github.com/obolnetwork/charon/app/z"
 	"github.com/obolnetwork/charon/eth2util"
 	"github.com/obolnetwork/charon/tbls"
 )
@@ -105,6 +108,15 @@ func Verify(ctx context.Context, eth2Cl eth2wrap.Client, domain DomainName, epoc
 	}
 
 	span.AddEvent("tbls.Verify")
+
+	log.Debug(ctx, "Verifying BLS signature",
+		z.Str("domain", string(domain)),
+		z.Str("pubkey", hex.EncodeToString(pubkey[:])),
+		z.Str("sigRoot", sigRoot.String()),
+		z.U64("epoch", uint64(epoch)),
+		z.Str("dataRoot", hex.EncodeToString(sigData[:])),
+		z.Str("signature", hex.EncodeToString(signature[:])),
+	)
 
 	return tbls.Verify(pubkey, sigData[:], tbls.Signature(signature))
 }
