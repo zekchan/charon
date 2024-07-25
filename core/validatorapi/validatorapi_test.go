@@ -38,6 +38,139 @@ import (
 	"github.com/obolnetwork/charon/testutil/validatormock"
 )
 
+/*
+func mustParseHex(t *testing.T, hexstr string) []byte {
+	b, err := hex.DecodeString(hexstr)
+	require.NoError(t, err)
+
+	return b
+}
+
+func TestChiadoSignature(t *testing.T) {
+	var pk core.PubKey = "0x8b9b72b6680b6fe004fb0077023ebb0ab29268a78c74c658216abffcb552c13dae74a0da98857eb68dc2d0d4dd4dddc1"
+
+	e2pk, err := pk.ToETH2()
+	require.NoError(t, err)
+
+	var tblspk tbls.PublicKey = tbls.PublicKey(e2pk)
+
+	sig, err := hex.DecodeString("953f532ccd4861eb0279fd11099cfd5cb586fdd7b5f41e2a0284ca370176c2072d07d6b2439a6d9ea08ce3b029308e2317796de279371213836b11455a2f7de7102127475d9626c158eb85bd003855fef4b0d5f3d9db7007537d464de3a90da0")
+	require.NoError(t, err)
+	require.Len(t, sig, 96)
+
+	var tblssig tbls.Signature
+	copy(tblssig[:], sig)
+
+	msg, err := hex.DecodeString("45c4e28e2b213a03a74a6ff984c704a0716235c15d89fa1ac489a31fe1e77aba")
+	require.NoError(t, err)
+
+	err = tbls.Verify(tblspk, msg, tblssig)
+	require.NoError(t, err)
+}
+
+func TestEthereumSignature(t *testing.T) {
+	var pk core.PubKey = "0xb9e1bec3f611b59aeef25a4ff2bb72137b76f967167139374bc36fab43b365160ce9a66d53cff140c494331c01daa294"
+
+	e2pk, err := pk.ToETH2()
+	require.NoError(t, err)
+
+	var tblspk tbls.PublicKey = tbls.PublicKey(e2pk)
+
+	sig, err := hex.DecodeString("a4d6d1c44452437382d95eae74c7de0e3b516ff5d6a5e4df255d03dd5f60b807d74fae1a23fad3c5e85b1bc758fae5f7077f7a0e0f32b64d6ac96dcbf979061ac15c7b45e53ad147970deb1a5c068d8eb3d07c9fc3a16f928f394c2c30cbc720")
+	require.NoError(t, err)
+	require.Len(t, sig, 96)
+
+	var tblssig tbls.Signature
+	copy(tblssig[:], sig)
+
+	msg, err := hex.DecodeString("361c705d6d893be5c716c6e86b4a6e8921190f791ff2fffe8910cd6e1b093c9e")
+	require.NoError(t, err)
+
+	err = tbls.Verify(tblspk, msg, tblssig)
+	require.NoError(t, err)
+}
+*/
+
+func TestChiadoDerivePublic(t *testing.T) {
+	/*
+		var privkey [4]tbls.PrivateKey
+		copy(privkey[0][:], mustParseHex(t, "7a9fc6cd1a95788f22288062881b5507"))
+		copy(privkey[0][:], mustParseHex(t, "7a9fc6cd1a95788f22288062881b5507"))
+		copy(privkey[0][:], mustParseHex(t, "7a9fc6cd1a95788f22288062881b5507"))
+		copy(privkey[0][:], mustParseHex(t, "7a9fc6cd1a95788f22288062881b5507"))
+		tbls.RecoverSecret()
+
+		pubkey, err := tbls.SecretToPublicKey(privkey)
+		require.NoError(t, err)
+		require.Equal(t, mustParseHex(t, "b413ced71694c83b5ba54cea8a5ecd5485d88198d304523bb87cd3ce0fd1caf3727eb7cd3c3eae61c6a300e47a14cbce"), pubkey[:])
+	*/
+	/*
+					{
+				 "crypto": {
+				  "checksum": {
+				   "function": "sha256",
+				   "message": "fe23f11959ccad10c451cf6227c8904fabcdc743b2d9353cbc2cabb9e4bf4435",
+				   "params": {}
+				  },
+				  "cipher": {
+				   "function": "aes-128-ctr",
+				   "message": "f05c7c6e44ef5fdf9d2e6f0229d9bbe2a8294db42e9da19a65eea69bc65bf1f3",
+				   "params": {
+				    "iv": "cdc982e8c324f24514e564c7260f26fd"
+				   }
+				  },
+				  "kdf": {
+				   "function": "pbkdf2",
+				   "message": "",
+				   "params": {
+				    "c": 262144,
+				    "dklen": 32,
+				    "prf": "hmac-sha256",
+				    "salt": "5cc4a5ae088289274c99138eeab1abc70a69d516e731220da11161a8827230a2"
+				   }
+				  }
+				 },
+				 "description": "",
+				 "pubkey": "b413ced71694c83b5ba54cea8a5ecd5485d88198d304523bb87cd3ce0fd1caf3727eb7cd3c3eae61c6a300e47a14cbce",
+				 "path": "m/12381/3600/0/0/0",
+				 "uuid": "F8B55091-09E5-5E93-706B-D61ACE86138E",
+				 "version": 4
+				}
+
+				{
+		 "crypto": {
+		  "checksum": {
+		   "function": "sha256",
+		   "message": "f94aed8950b096a8cb241ee5db8f2d61faca63619d59689e89e5bf4f8b708bce",
+		   "params": {}
+		  },
+		  "cipher": {
+		   "function": "aes-128-ctr",
+		   "message": "f85a33464aeac0c148286643f49af849061b88c97d08cddf7315f6955252f8cb",
+		   "params": {
+		    "iv": "262e45f5d4224595fe531027ca272d16"
+		   }
+		  },
+		  "kdf": {
+		   "function": "pbkdf2",
+		   "message": "",
+		   "params": {
+		    "c": 262144,
+		    "dklen": 32,
+		    "prf": "hmac-sha256",
+		    "salt": "71ea47188998219393cc6c82b6c45c235605b03bb5bf28f0e052fdb305c4dfd3"
+		   }
+		  }
+		 },
+		 "description": "",
+		 "pubkey": "a429a597262dbe67183a0dc165448273f1806990b1b3616fb77af6740ea7e39443d0ba061dd9c614adce3e9a0e2ea792",
+		 "path": "m/12381/3600/0/0/0",
+		 "uuid": "C9FA9D42-E23A-D013-B428-9EB9125C6374",
+		 "version": 4
+		}
+	*/
+}
+
 func TestComponent_ValidSubmitAttestations(t *testing.T) {
 	ctx := context.Background()
 	eth2Cl, err := beaconmock.New()

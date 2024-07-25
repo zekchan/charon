@@ -66,6 +66,8 @@ func GetDataRoot(ctx context.Context, eth2Cl eth2wrap.Client, name DomainName, e
 		return [32]byte{}, err
 	}
 
+	log.Debug(ctx, "GetDomain result", z.Str("domain", hex.EncodeToString(domain[:])))
+
 	msg, err := (&eth2p0.SigningData{ObjectRoot: root, Domain: domain}).HashTreeRoot()
 	if err != nil {
 		return [32]byte{}, errors.Wrap(err, "marshal signing data")
