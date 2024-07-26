@@ -61,7 +61,7 @@ var (
 		ChainID:               10200,
 		Name:                  "chiado",
 		GenesisForkVersionHex: "0x0000006f",
-		GenesisTimestamp:      1665396000,
+		GenesisTimestamp:      1665396300,
 		CapellaHardFork:       "0x0300006f",
 	}
 	Sepolia = Network{

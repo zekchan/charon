@@ -4,6 +4,7 @@ package validatorapi_test
 
 import (
 	"context"
+	"encoding/hex"
 	"fmt"
 	"sort"
 	"sync"
@@ -38,7 +39,6 @@ import (
 	"github.com/obolnetwork/charon/testutil/validatormock"
 )
 
-/*
 func mustParseHex(t *testing.T, hexstr string) []byte {
 	b, err := hex.DecodeString(hexstr)
 	require.NoError(t, err)
@@ -46,6 +46,7 @@ func mustParseHex(t *testing.T, hexstr string) []byte {
 	return b
 }
 
+/*
 func TestChiadoSignature(t *testing.T) {
 	var pk core.PubKey = "0x8b9b72b6680b6fe004fb0077023ebb0ab29268a78c74c658216abffcb552c13dae74a0da98857eb68dc2d0d4dd4dddc1"
 
@@ -91,85 +92,53 @@ func TestEthereumSignature(t *testing.T) {
 }
 */
 
-func TestChiadoDerivePublic(t *testing.T) {
-	/*
-		var privkey [4]tbls.PrivateKey
-		copy(privkey[0][:], mustParseHex(t, "7a9fc6cd1a95788f22288062881b5507"))
-		copy(privkey[0][:], mustParseHex(t, "7a9fc6cd1a95788f22288062881b5507"))
-		copy(privkey[0][:], mustParseHex(t, "7a9fc6cd1a95788f22288062881b5507"))
-		copy(privkey[0][:], mustParseHex(t, "7a9fc6cd1a95788f22288062881b5507"))
-		tbls.RecoverSecret()
+/*
+func TestChiadoTBLS(t *testing.T) {
+	const keysTotal = 30
+	const nodesTotal = 4
 
-		pubkey, err := tbls.SecretToPublicKey(privkey)
+	// data is random, used for all keys
+	data := mustParseHex(t, "b413ced71694c83b5ba54cea8a5ecd5485d88198d304523bb87cd3ce0fd1caf3727eb7cd3c3eae61c6a300e47a14cbce")
+	allKeys := make([]map[int]tbls.PrivateKey, keysTotal)
+	parsigs := make([]map[int]tbls.Signature, keysTotal)
+
+	for i := 0; i < nodesTotal; i++ {
+		path := fmt.Sprintf("/Users/pinebit/chiado/node%d/validator_keys", i)
+		keyFiles, err := keystore.LoadFilesUnordered(path)
 		require.NoError(t, err)
-		require.Equal(t, mustParseHex(t, "b413ced71694c83b5ba54cea8a5ecd5485d88198d304523bb87cd3ce0fd1caf3727eb7cd3c3eae61c6a300e47a14cbce"), pubkey[:])
-	*/
-	/*
-					{
-				 "crypto": {
-				  "checksum": {
-				   "function": "sha256",
-				   "message": "fe23f11959ccad10c451cf6227c8904fabcdc743b2d9353cbc2cabb9e4bf4435",
-				   "params": {}
-				  },
-				  "cipher": {
-				   "function": "aes-128-ctr",
-				   "message": "f05c7c6e44ef5fdf9d2e6f0229d9bbe2a8294db42e9da19a65eea69bc65bf1f3",
-				   "params": {
-				    "iv": "cdc982e8c324f24514e564c7260f26fd"
-				   }
-				  },
-				  "kdf": {
-				   "function": "pbkdf2",
-				   "message": "",
-				   "params": {
-				    "c": 262144,
-				    "dklen": 32,
-				    "prf": "hmac-sha256",
-				    "salt": "5cc4a5ae088289274c99138eeab1abc70a69d516e731220da11161a8827230a2"
-				   }
-				  }
-				 },
-				 "description": "",
-				 "pubkey": "b413ced71694c83b5ba54cea8a5ecd5485d88198d304523bb87cd3ce0fd1caf3727eb7cd3c3eae61c6a300e47a14cbce",
-				 "path": "m/12381/3600/0/0/0",
-				 "uuid": "F8B55091-09E5-5E93-706B-D61ACE86138E",
-				 "version": 4
-				}
+		require.Len(t, keyFiles, keysTotal)
 
-				{
-		 "crypto": {
-		  "checksum": {
-		   "function": "sha256",
-		   "message": "f94aed8950b096a8cb241ee5db8f2d61faca63619d59689e89e5bf4f8b708bce",
-		   "params": {}
-		  },
-		  "cipher": {
-		   "function": "aes-128-ctr",
-		   "message": "f85a33464aeac0c148286643f49af849061b88c97d08cddf7315f6955252f8cb",
-		   "params": {
-		    "iv": "262e45f5d4224595fe531027ca272d16"
-		   }
-		  },
-		  "kdf": {
-		   "function": "pbkdf2",
-		   "message": "",
-		   "params": {
-		    "c": 262144,
-		    "dklen": 32,
-		    "prf": "hmac-sha256",
-		    "salt": "71ea47188998219393cc6c82b6c45c235605b03bb5bf28f0e052fdb305c4dfd3"
-		   }
-		  }
-		 },
-		 "description": "",
-		 "pubkey": "a429a597262dbe67183a0dc165448273f1806990b1b3616fb77af6740ea7e39443d0ba061dd9c614adce3e9a0e2ea792",
-		 "path": "m/12381/3600/0/0/0",
-		 "uuid": "C9FA9D42-E23A-D013-B428-9EB9125C6374",
-		 "version": 4
+		for _, kf := range keyFiles {
+			if allKeys[kf.FileIndex] == nil {
+				allKeys[kf.FileIndex] = make(map[int]tbls.PrivateKey)
+			}
+			allKeys[kf.FileIndex][i+1] = kf.PrivateKey
+
+			sig, err := tbls.Sign(kf.PrivateKey, data)
+			require.NoError(t, err)
+
+			if parsigs[kf.FileIndex] == nil {
+				parsigs[kf.FileIndex] = make(map[int]tbls.Signature)
+			}
+			parsigs[kf.FileIndex][i+1] = sig
 		}
-	*/
+	}
+
+	for i, ak := range allKeys {
+		secret, err := tbls.RecoverSecret(ak, nodesTotal, nodesTotal)
+		require.NoError(t, err)
+
+		pubkey, err := tbls.SecretToPublicKey(secret)
+		require.NoError(t, err)
+
+		aggsig, err := tbls.ThresholdAggregate(parsigs[i])
+		require.NoError(t, err)
+
+		err = tbls.Verify(pubkey, data, aggsig)
+		require.NoError(t, err)
+	}
 }
+*/
 
 func TestComponent_ValidSubmitAttestations(t *testing.T) {
 	ctx := context.Background()
