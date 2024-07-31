@@ -4,6 +4,7 @@ package fetcher
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"math"
 	"strings"
@@ -269,6 +270,13 @@ func (f *Fetcher) fetchProposerData(ctx context.Context, slot uint64, defSet cor
 			return nil, err
 		}
 		proposal := eth2Resp.Data
+
+		js, err := json.Marshal(proposal)
+		if err != nil {
+			return nil, errors.Wrap(err, "json marshal")
+		}
+
+		log.Debug(ctx, "Fetched proposal", z.Str("pubkey", pubkey.String()), z.Str("proposal", string(js)))
 
 		// Ensure fee recipient is correctly populated in proposal.
 		verifyFeeRecipient(ctx, proposal, f.feeRecipientFunc(pubkey))
