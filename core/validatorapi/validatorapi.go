@@ -434,7 +434,7 @@ func versionedSignedProposalMessageRoot(v *eth2api.VersionedSignedProposal) (eth
 			return v.DenebBlinded.Message.HashTreeRoot()
 		}
 
-		return v.Deneb.HashTreeRoot()
+		return v.Deneb.SignedBlock.Message.HashTreeRoot()
 	default:
 		return eth2p0.Root{}, errors.New("unknown version")
 	}
@@ -447,7 +447,7 @@ func versionedSignedBlindedProposalMessageRoot(v *eth2api.VersionedSignedBlinded
 	case eth2spec.DataVersionCapella:
 		return v.Capella.Message.HashTreeRoot()
 	case eth2spec.DataVersionDeneb:
-		return v.Deneb.HashTreeRoot()
+		return v.Deneb.Message.HashTreeRoot()
 	default:
 		return eth2p0.Root{}, errors.New("unknown version")
 	}
