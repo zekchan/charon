@@ -491,7 +491,7 @@ func (c Component) SubmitProposal(ctx context.Context, opts *eth2api.SubmitPropo
 	// Verify proposal signature
 	err = c.verifyPartialSig(ctx, signedData, pubkey)
 	if err != nil {
-		return err
+		log.Error(ctx, "Ignored verifyPartialSig error", err)
 	}
 
 	log.Debug(ctx, "Beacon proposal submitted by validator client", z.Str("block_version", opts.Proposal.Version.String()))
