@@ -203,3 +203,5 @@ require (
 
 // We're replacing kryptology with our own fork, which fixes dependencies' security vulnerabilities.
 replace github.com/coinbase/kryptology => github.com/ObolNetwork/kryptology v0.0.0-20231016091344-eed023b6cac8
+
+replace github.com/attestantio/go-eth2-client => github.com/ObolNetwork/go-eth2-client v0.0.0-4e5161e
