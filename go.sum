@@ -24,8 +24,8 @@ github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161/go.mod h1:xomTg6
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/Microsoft/go-winio v0.6.1 h1:9/kr64B9VUZrLm5YYwbGtUJnMgqWVOdUAXu6Migciow=
 github.com/Microsoft/go-winio v0.6.1/go.mod h1:LRdKpFKfdobln8UmuiYcKPot9D2v6svN5+sAH+4kjUM=
-github.com/ObolNetwork/go-eth2-client v0.0.0-4e5161e h1:GV/PhQ1Jbm+5BbEf4u6HyBKuL0V7IL4HQZsEGJpC4JI=
-github.com/ObolNetwork/go-eth2-client v0.0.0-4e5161e/go.mod h1:d7ZPNrMX8jLfIgML5u7QZxFo2AukLM+5m08iMaLdqb8=
+github.com/ObolNetwork/go-eth2-client v0.0.0-3bde389 h1:SRMBAXARW55POEnISnV81Mxn52f7DN3xms56PnHtpTA=
+github.com/ObolNetwork/go-eth2-client v0.0.0-3bde389/go.mod h1:d7ZPNrMX8jLfIgML5u7QZxFo2AukLM+5m08iMaLdqb8=
 github.com/ObolNetwork/kryptology v0.0.0-20231016091344-eed023b6cac8 h1:IXoKQKGzebwtIzKADtZyAjL3MIr0m3zQFxlSxxWIdCU=
 github.com/ObolNetwork/kryptology v0.0.0-20231016091344-eed023b6cac8/go.mod h1:qcn33Qgj0WVLH1nuXqPt8JHY+yZabhyKxI5dHRk0fbo=
 github.com/anmitsu/go-shlex v0.0.0-20161002113705-648efa622239/go.mod h1:2FmKhYUyUczH0OGQWaF5ceTx0UBShxjsH6f8oGKYe2c=
